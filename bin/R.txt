@@ -335,11 +335,14 @@ int id action_context_bar 0x7f08002f
 int id action_menu_divider 0x7f080028
 int id action_menu_presenter 0x7f080029
 int id action_mode_close_button 0x7f080036
-int id action_settings 0x7f080050
+int id action_settings 0x7f080054
 int id activity_chooser_view_content 0x7f080037
 int id always 0x7f08001e
 int id beginning 0x7f080023
 int id book_now 0x7f080010
+int id btnAddSpot 0x7f080050
+int id btnShowPrivateMenu 0x7f080051
+int id btnShowPublicMenu 0x7f080053
 int id buyButton 0x7f08000a
 int id buy_now 0x7f08000f
 int id buy_with_google 0x7f08000e
@@ -401,6 +404,7 @@ int id tabMode 0x7f080015
 int id terrain 0x7f080003
 int id title 0x7f08003d
 int id top_action_bar 0x7f080032
+int id tvSpotName 0x7f080052
 int id up 0x7f080033
 int id useLogo 0x7f080016
 int id withText 0x7f08001f
@@ -433,7 +437,8 @@ int layout abc_search_view 0x7f030016
 int layout abc_simple_decor 0x7f030017
 int layout activity_main 0x7f030018
 int layout fragment_main 0x7f030019
-int layout support_simple_spinner_dropdown_item 0x7f03001a
+int layout main_screen 0x7f03001a
+int layout support_simple_spinner_dropdown_item 0x7f03001b
 int menu main 0x7f0c0000
 int string abc_action_bar_home_description 0x7f060021
 int string abc_action_bar_up_description 0x7f060022
