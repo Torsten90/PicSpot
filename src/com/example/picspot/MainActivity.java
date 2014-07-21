@@ -1,20 +1,23 @@
 package com.example.picspot;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import java.io.Console;
+
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager ;
+import android.support.v4.app.FragmentTransaction;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-
-
+import android.os.Build;
 
 public class MainActivity extends ActionBarActivity {
+	
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,14 +30,23 @@ public class MainActivity extends ActionBarActivity {
                     .commit();
         }
         
-       
-		FragmentManager fragmentManager = getSupportFragmentManager();
-	    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-	    MainScreenFragment fragment = new MainScreenFragment();
-	    
-	    fragmentTransaction.addToBackStack(null);
-	    fragmentTransaction.replace(R.id.container, fragment);
-	    fragmentTransaction.commit();
+        final MainActivity activity = this;
+        
+        new android.os.Handler().postDelayed(
+		    new Runnable() {
+		        public void run() {
+		        	FragmentManager fragmentManager = getSupportFragmentManager();
+		    	    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+		    	    LoginFragment fragment = new LoginFragment(activity);
+		    	    
+		    	    fragmentTransaction.addToBackStack(null);
+		    	    fragmentTransaction.replace(R.id.container, fragment);
+		    	    fragmentTransaction.commit();
+		        }
+		    }, 
+		1000);
+        
+        
     }
 
 
