@@ -17,6 +17,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,9 +36,8 @@ public class LoginFragment extends Fragment{
 	private Button login;
 	Context context;
 	
-    public LoginFragment(Context context) {
-    	context = context;
-    	
+    public LoginFragment() {
+
     }
 
     @Override
@@ -102,6 +103,15 @@ public class LoginFragment extends Fragment{
         	    if(strUsername.equals(serverUsername) && passwordHash.equals(serverPassword)){
     		        Toast.makeText(getActivity(), "Redirecting...", 
     		        Toast.LENGTH_SHORT).show();
+    		        
+    		        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+    	    	    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+    	    	    MainScreenFragment fragment = new MainScreenFragment();
+    	    	    
+    	    	    fragmentTransaction.addToBackStack(null);
+    	    	    fragmentTransaction.replace(R.id.container, fragment);
+    	    	    fragmentTransaction.commit();
+    		        
     	        } else {
     		        Toast.makeText(getActivity(), "Wrong Credentials",
     		        Toast.LENGTH_SHORT).show();

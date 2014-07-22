@@ -37,7 +37,7 @@ public class MainActivity extends ActionBarActivity {
 		        public void run() {
 		        	FragmentManager fragmentManager = getSupportFragmentManager();
 		    	    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-		    	    LoginFragment fragment = new LoginFragment(activity);
+		    	    LoginFragment fragment = new LoginFragment();
 		    	    
 		    	    fragmentTransaction.addToBackStack(null);
 		    	    fragmentTransaction.replace(R.id.container, fragment);

@@ -1,7 +1,9 @@
 package com.example.picspot.Objects;
 
 public class Spot {
-	//name
+	String name;
+	
+
 	//poster_image
 	//desc;
 	double lng;
@@ -11,10 +13,11 @@ public class Spot {
 	//creator
 	//state
 	
-	public Spot(double pLng, double pLat) {
+	public Spot(double pLat, double pLng,String pName) {
 		this.radius = 10;
-		this.lng = pLng;
 		this.lat = pLat;
+		this.lng = pLng;
+		this.name = pName;
 	}
 
 	public double getLng() {
@@ -40,5 +43,11 @@ public class Spot {
 	public void setRadius(int radius) {
 		this.radius = radius;
 	}
-	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 }
