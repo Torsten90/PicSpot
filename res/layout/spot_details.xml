@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/tvSpotName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="SpotName" />
+
+        <RadioButton
+            android:id="@+id/rbKM"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/rbM"
+            android:layout_alignBottom="@+id/rbM"
+            android:layout_marginLeft="27dp"
+            android:layout_toRightOf="@+id/tvSpotName"
+            android:text="km" />
+
+        <SeekBar
+            android:id="@+id/sb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/btnAddPic"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="47dp" />
+
+        <Button
+            android:id="@+id/btnAddPic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/rbKM"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="124dp"
+            android:text="Add Pic" />
+
+        <RadioButton
+            android:id="@+id/rbM"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/btnAddPic"
+            android:layout_toLeftOf="@+id/btnAddPic"
+            android:text="m" />
+
+        <TextView
+            android:id="@+id/tvSpotDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/tvSpotName"
+            android:layout_below="@+id/tvSpotName"
+            android:layout_marginTop="17dp"
+            android:text="Beschreibung" />
+
+        <include layout="@layout/add_pic_selection" />
+    </RelativeLayout>
+
+</LinearLayout>
