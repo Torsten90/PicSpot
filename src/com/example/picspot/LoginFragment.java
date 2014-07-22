@@ -1,9 +1,14 @@
 package com.example.picspot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,41 +51,55 @@ public class LoginFragment extends Fragment{
         login.setOnClickListener(new Button.OnClickListener(){
         	public void onClick(View view){
         		
-        		String passwordHash = Helper.md5(password.getText().toString());
-        		Log.i("hash", passwordHash);
+        		String strPassword 			= password.getText().toString();
+        		final String strUsername 	= username.getText().toString();
+        		final String passwordHash = Helper.md5(strPassword);
         		
-        		String strPassword = password.getText().toString();
-        		String strUsername = username.getText().toString();
+        		String url = "http://picspot.weislogel.net?user="+strUsername+"&pass="+passwordHash;
         		
-        		String url = "http://picspot.weislogel.net?user="+strUsername+"&pass="+strPassword;
-        		
-        		Map<String, String> map = new HashMap<String, String>();
-        		map.put("strPassword", strPassword);
-        		map.put("strUsername", strUsername);
-        		
-        		new AsyncTask<Map, Void, Void>() {
+        		final List<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair("user", strUsername));
+                params.add(new BasicNameValuePair("pass", passwordHash));
+                
+                AsyncTask loader = new AsyncTask<Map, Void, JSONArray>() {
         	        @Override
-        	        protected Void doInBackground(Map ...map) {
-        	        	JSONObject jsonobject = JSONfunctions.getJSONfromURL("http://picspot.weislogel.net?user="+map.get("strUsername")+"&pass="+map.get("strPassword"));
-        	            //Log.v("Stackoverflow", json.toString());
-        	            return null;
+        	        protected JSONArray doInBackground(Map ...map) {
+        	        	String url = "http://picspot.weislogel.net/getUser.php?user="+strUsername+"&pass="+passwordHash;
+        	        	
+        	        	JSONObject jsonResult = JSONfunctions.getJSONfromURL(url);
+        	        	JSONArray data = new JSONArray();
+        	        	try {
+        	        		data = jsonResult.getJSONArray("user");
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+        	            return data;
         	        }
         	    }.execute();
-        		
-        		try {
-					JSONArray user = (JSONArray) jsonobject.get("user");
-					for (int i = 0; i < user.length(); i++)
-					{
-					    String struser = user.getJSONObject(i).getString("post_id");
-					    //Log.i("user", struser);
-					}
-				} catch (JSONException e) {
+        	    
+        	    String serverUsername = "";
+	        	String serverPassword = "";
+        	    
+        	    JSONArray data;
+        	    try {
+    				data = (JSONArray) loader.get();
+    				if(data != null) {
+            		    for(int i = 0 ; i < data.length() ; i++) {
+            		    	JSONObject obj = data.getJSONObject(i);
+            		    	serverUsername = obj.getString("u_username");
+            		    	serverPassword = obj.getString("u_pass");
+            		    }
+            		}
+    			} catch (InterruptedException e) {
+    				e.printStackTrace();
+    			} catch (ExecutionException e) {
+    				e.printStackTrace();
+    			} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-        		
-        		
-        		if(strUsername.equals("admin") && strPassword.equals("admin")){
+        	    
+        	    if(strUsername.equals(serverUsername) && passwordHash.equals(serverPassword)){
     		        Toast.makeText(getActivity(), "Redirecting...", 
     		        Toast.LENGTH_SHORT).show();
     	        } else {
@@ -89,8 +108,6 @@ public class LoginFragment extends Fragment{
     	        }
         	}
         });
-        
-        
         return detailView;
     }
    
