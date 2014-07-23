@@ -1,12 +1,9 @@
 package com.example.picspot;
 
-import java.io.Console;
-
 import com.example.picspot.Objects.Pic;
 import com.example.picspot.Objects.User;
 
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -22,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-import android.os.Build;
 import android.provider.Settings;
 
 public class MainActivity extends ActionBarActivity {
@@ -45,6 +41,7 @@ public class MainActivity extends ActionBarActivity {
 		final MainActivity activity = this;
 
 		new android.os.Handler().postDelayed(new Runnable() {
+			@Override
 			public void run() {
 				FragmentManager fragmentManager = getSupportFragmentManager();
 				FragmentTransaction fragmentTransaction = fragmentManager
@@ -122,8 +119,8 @@ public class MainActivity extends ActionBarActivity {
 
 				lastPic.setLat(currentLoc.getLatitude());
 				lastPic.setLng(currentLoc.getLongitude());
-
-				Log.i("test", pic.toString());
+				lastPic.setCreator(user.getId());
+				lastPic.ladeBitmap();
 			}
 		} else if (resultCode == RESULT_CANCELED) {
 			// User cancelled the image capture

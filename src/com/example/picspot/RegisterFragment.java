@@ -3,9 +3,6 @@ package com.example.picspot;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpResponse;
@@ -15,10 +12,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -63,7 +56,8 @@ public class RegisterFragment extends Fragment{
         register = (Button)detailView.findViewById(R.id.btnRegister);
         
         register.setOnClickListener(new Button.OnClickListener(){
-        	public void onClick(View view){
+        	@Override
+			public void onClick(View view){
         		 boolean invalid = false; 
         		 
         		 String etFirstnameStr 	= etFirstname.getText().toString();

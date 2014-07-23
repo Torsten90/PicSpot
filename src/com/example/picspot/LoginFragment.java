@@ -1,8 +1,6 @@
 package com.example.picspot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -21,7 +19,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,11 +48,12 @@ public class LoginFragment extends Fragment{
         
         username = (EditText)detailView.findViewById(R.id.editText1);
         password = (EditText)detailView.findViewById(R.id.editText2);
-        login = (Button)detailView.findViewById(R.id.button1);
+        login = (Button)detailView.findViewById(R.id.btnShowPics);
         
         register = (Button)detailView.findViewById(R.id.btnLoginRegister);
         register.setOnClickListener(new Button.OnClickListener(){
-        	public void onClick(View view){
+        	@Override
+			public void onClick(View view){
         		
         		FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 	    	    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -75,7 +73,8 @@ public class LoginFragment extends Fragment{
         
         
         login.setOnClickListener(new Button.OnClickListener(){
-        	public void onClick(View view){
+        	@Override
+			public void onClick(View view){
         		
         		String strPassword 			= password.getText().toString();
         		final String strUsername 	= username.getText().toString();
@@ -115,8 +114,8 @@ public class LoginFragment extends Fragment{
             		    	
             		    	String serverFirstname = obj.getString("u_firstname");
             		    	String serverLastname = obj.getString("u_lastname");
-            		    	String serverEmail = obj.getString("u_emai");
-            		    	int serverId = (int) obj.getInt("u_id");
+            		    	String serverEmail = obj.getString("u_email");
+            		    	int serverId = obj.getInt("u_id");
             		    	
             		    	User user = new User(serverId, serverFirstname, serverLastname, serverEmail, serverPassword, serverUsername); 
             		    	((MainActivity) getActivity()).setUser(user);

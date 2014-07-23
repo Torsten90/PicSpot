@@ -1,9 +1,18 @@
 package com.example.picspot;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,7 +24,6 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.provider.Telephony.Sms.Conversations;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -24,14 +32,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-
 import com.example.picspot.Objects.Spot;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -54,7 +58,8 @@ public class MainScreenFragment extends Fragment{
         loadSpots();
        
         gMap.setOnMarkerClickListener(new OnMarkerClickListener() {
-            public boolean onMarkerClick(Marker marker) {
+            @Override
+			public boolean onMarkerClick(Marker marker) {
             	 // Check if there is an open info window
                 if (lastOpened != null) {
                     // Close the info window
@@ -68,7 +73,6 @@ public class MainScreenFragment extends Fragment{
                         return true;
                     } 
                 }
-				
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 	    	    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 	    	    SpotDetailFragment fragment = new SpotDetailFragment();
@@ -88,7 +92,8 @@ public class MainScreenFragment extends Fragment{
         final Button btnAddSpot = (Button) resultView.findViewById(R.id.btnAddSpot);
         
         btnAddSpot.setOnClickListener(new Button.OnClickListener(){
-        	public void onClick(View view){
+        	@Override
+			public void onClick(View view){
         		LocationManager locManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         		boolean enabled = locManager
         		  .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -108,7 +113,41 @@ public class MainScreenFragment extends Fragment{
     }
 	
 	private void addSpot(double lat, double lng){
-		Spot spot = new Spot(lat,lng, "Firstspot");
+		
+		Spot spot = new Spot(lat,lng, "MySpot",1);
+		String params = spot.genUploadURL();
+		
+		 AsyncTask loader = new AsyncTask<String, Void, Boolean>() {
+	        @Override
+	        protected Boolean doInBackground(String ...fields) {
+	        	
+	        	String url = "http://picspot.weislogel.net/spot.php"+fields[0];
+	        	Log.i("url", url);
+	        	try {
+    	        	HttpClient httpclient = new DefaultHttpClient();
+    	        	HttpResponse response = httpclient.execute(new HttpGet(url));
+    	        	StatusLine statusLine = response.getStatusLine();
+    	        	if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+    	               ByteArrayOutputStream out = new ByteArrayOutputStream();
+    	               response.getEntity().writeTo(out);
+    	               out.close();
+    	               String responseString = out.toString();
+    	               //..more logic
+    	        	} else{
+    	               //Closes the connection.
+    	               response.getEntity().getContent().close();
+    	               throw new IOException(statusLine.getReasonPhrase());
+    	        	}
+	        	} catch (ClientProtocolException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	        	return true;	
+	        }
+	    }.execute(params);
 	}
 	
 	private void loadSpots(){
@@ -141,8 +180,9 @@ public class MainScreenFragment extends Fragment{
     		    	double lat = Double.parseDouble(obj.getString("s_latitude"));
     		    	double lng = Double.parseDouble(obj.getString("s_longitude"));
     		    	String spotName = obj.getString("s_name");
+    		    	int creator = Integer.parseInt(obj.getString("s_creator"));
     		    	
-    		    	spot = new Spot(lat,lng,spotName);
+    		    	spot = new Spot(lat,lng,spotName,1);
     		    	gMap.addMarker( new MarkerOptions().position(new LatLng( spot.getLat(),spot.getLng())).title(spot.getName()));
     		    	spotVector.add(spot);
     		    }

@@ -60,7 +60,7 @@
       android:inputType="textPassword" />
 
    <Button
-       android:id="@+id/button1"
+       android:id="@+id/btnShowPics"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
        android:layout_alignRight="@+id/editText2"
@@ -74,8 +74,8 @@
        android:id="@+id/btnLoginRegister"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
-       android:layout_alignBaseline="@+id/button1"
-       android:layout_alignBottom="@+id/button1"
+       android:layout_alignBaseline="@+id/btnShowPics"
+       android:layout_alignBottom="@+id/btnShowPics"
        android:layout_alignLeft="@+id/textView3"
        android:text="@string/btnRegistr" />
     

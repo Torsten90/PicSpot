@@ -8,15 +8,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <TextView
-            android:id="@+id/tvSpotName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:text="SpotName" />
-
         <RadioButton
             android:id="@+id/rbKM"
             android:layout_width="wrap_content"
@@ -28,7 +19,7 @@
             android:text="km" />
 
         <SeekBar
-            android:id="@+id/sb"
+            android:id="@+id/sbRadius"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/btnAddPic"
@@ -52,27 +43,25 @@
             android:layout_toLeftOf="@+id/btnAddPic"
             android:text="m" />
 
-        <TextView
-            android:id="@+id/tvSpotDesc"
+        <Button
+            android:id="@+id/btnShowPics"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/tvSpotName"
-            android:layout_below="@+id/tvSpotName"
-            android:layout_marginTop="17dp"
-            android:text="Beschreibung" />
+            android:layout_alignBaseline="@+id/btnAddPic"
+            android:layout_alignBottom="@+id/btnAddPic"
+            android:layout_alignRight="@+id/tvSpotDesc"
+            android:text="Show" />
 
-        <include layout="@layout/add_pic_selection" />
-
-        <ImageView
-            android:id="@+id/ivTest"
+        <Button
+            android:id="@+id/btnSaveSpotDetails"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/tvSpotDesc"
-            android:layout_marginLeft="59dp"
-            android:layout_marginTop="68dp"
-            android:src="@drawable/abc_ab_bottom_solid_dark_holo" />
-
+            android:layout_alignBaseline="@+id/btnShowPics"
+            android:layout_alignBottom="@+id/btnShowPics"
+            android:layout_toLeftOf="@+id/tvSpotDesc"
+            android:text="Speichern" />
+        
+  		<include layout="@layout/add_pic_selection" />
     </RelativeLayout>
 
 </LinearLayout>

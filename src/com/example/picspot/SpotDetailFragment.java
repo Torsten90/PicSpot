@@ -4,23 +4,19 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-
-import com.example.picspot.Objects.Pic;
 
 public class SpotDetailFragment extends Fragment{
 
@@ -40,9 +36,11 @@ public class SpotDetailFragment extends Fragment{
         final Button btnAddPic = (Button) resultView.findViewById(R.id.btnAddPic);
         final Button btnCam = (Button) resultView.findViewById(R.id.btnCam);
         final Button btnGallerie = (Button) resultView.findViewById(R.id.btnGallerie);
+        final Button btnShowPics = (Button) resultView.findViewById(R.id.btnShowPics);
         
         btnAddPic.setOnClickListener(new Button.OnClickListener(){
-        	public void onClick(View view){
+        	@Override
+			public void onClick(View view){
         		btnCam.setVisibility(View.VISIBLE);
         		btnGallerie.setVisibility(View.VISIBLE);
         	}    	
@@ -61,7 +59,6 @@ public class SpotDetailFragment extends Fragment{
        		   ((MainActivity) getActivity()).setLastPicPath(fileUri.toString());
        		   ((MainActivity) getActivity()).setLastPicName(name);
        		   
-       		   
        		    intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
        		    Log.i("test",fileUri.toString());
        		    
@@ -69,8 +66,22 @@ public class SpotDetailFragment extends Fragment{
        		    getActivity().startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
        		}
         });
+        
+        btnShowPics.setOnClickListener(new Button.OnClickListener(){
+        	@Override
+       	    public void onClick(View v) {
+        		FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+ 	    	    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+ 	    	    GalleryFragment fragment = new GalleryFragment();
+ 	    	    
+ 	    	    fragmentTransaction.addToBackStack(null);
+ 	    	    fragmentTransaction.replace(R.id.container, fragment);
+ 	    	    fragmentTransaction.commit();
+        	}
+        });
         return resultView;
 	}   
+	
 	
 	/** Create a file Uri for saving an image or video */
 	private static Uri getOutputMediaFileUri(int type, String name){

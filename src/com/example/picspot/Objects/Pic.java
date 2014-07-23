@@ -1,6 +1,9 @@
 package com.example.picspot.Objects;
 
+import java.io.File;
+
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 public class Pic {
 
@@ -22,11 +25,19 @@ public class Pic {
 		this.lng =pLng;
 	}
 	
+	public void ladeBitmap(){
+		//File imgFile = new  File(this.localPath);
+		File imgFile = new  File("/storage/emulated/0/Pictures/PicSpot/IMG_20140723_174628.jpg");
+		if(imgFile.exists()){
+		    //this.pic = BitmapFactory.decodeFile(imgFile.getAbsolutePath(/storage/emulated/0/Pictures/PicSpot/IMG_20140723_174628.jpg));
+			this.pic = BitmapFactory.decodeFile("/storage/emulated/0/Pictures/PicSpot/IMG_20140723_174628.jpg");
+		}
+	}
+	
 	private void uploadPic(){
 		
 	}
-	
-	
+
 	@Override
 	public String toString() {
 		return "Pic [pic=" + pic + ", localPath=" + localPath + ", name="
