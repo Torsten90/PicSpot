@@ -13,6 +13,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.picspot.Objects.User;
+
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -34,6 +36,8 @@ public class LoginFragment extends Fragment{
 	private EditText  password=null;
 	private TextView attempts;
 	private Button login;
+	private Button register;
+	
 	Context context;
 	
     public LoginFragment() {
@@ -49,14 +53,33 @@ public class LoginFragment extends Fragment{
         password = (EditText)detailView.findViewById(R.id.editText2);
         login = (Button)detailView.findViewById(R.id.button1);
         
+        register = (Button)detailView.findViewById(R.id.btnLoginRegister);
+        register.setOnClickListener(new Button.OnClickListener(){
+        	public void onClick(View view){
+        		
+        		FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+	    	    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+	    	    RegisterFragment fragment = new RegisterFragment();
+	    	    
+	    	    fragmentTransaction.addToBackStack(null);
+	    	    fragmentTransaction.replace(R.id.container, fragment);
+	    	    fragmentTransaction.commit();
+        		
+        	}
+        });
+        
+        if(((MainActivity) getActivity()).getHasRegistered()){
+        	((MainActivity) getActivity()).setHasRegistered(false);
+        	Toast.makeText(getActivity().getApplicationContext(), "Registrierung erfolgreich", Toast.LENGTH_SHORT).show();
+        }
+        
+        
         login.setOnClickListener(new Button.OnClickListener(){
         	public void onClick(View view){
         		
         		String strPassword 			= password.getText().toString();
         		final String strUsername 	= username.getText().toString();
         		final String passwordHash = Helper.md5(strPassword);
-        		
-        		String url = "http://picspot.weislogel.net?user="+strUsername+"&pass="+passwordHash;
         		
         		final List<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("user", strUsername));
@@ -65,7 +88,7 @@ public class LoginFragment extends Fragment{
                 AsyncTask loader = new AsyncTask<Map, Void, JSONArray>() {
         	        @Override
         	        protected JSONArray doInBackground(Map ...map) {
-        	        	String url = "http://picspot.weislogel.net/getUser.php?user="+strUsername+"&pass="+passwordHash;
+        	        	String url = "http://picspot.weislogel.net/user.php?type=getUser&name="+strUsername+"&pass="+passwordHash;
         	        	
         	        	JSONObject jsonResult = JSONfunctions.getJSONfromURL(url);
         	        	JSONArray data = new JSONArray();
@@ -89,6 +112,14 @@ public class LoginFragment extends Fragment{
             		    	JSONObject obj = data.getJSONObject(i);
             		    	serverUsername = obj.getString("u_username");
             		    	serverPassword = obj.getString("u_pass");
+            		    	
+            		    	String serverFirstname = obj.getString("u_firstname");
+            		    	String serverLastname = obj.getString("u_lastname");
+            		    	String serverEmail = obj.getString("u_emai");
+            		    	int serverId = (int) obj.getInt("u_id");
+            		    	
+            		    	User user = new User(serverId, serverFirstname, serverLastname, serverEmail, serverPassword, serverUsername); 
+            		    	((MainActivity) getActivity()).setUser(user);
             		    }
             		}
     			} catch (InterruptedException e) {
@@ -111,9 +142,8 @@ public class LoginFragment extends Fragment{
     	    	    fragmentTransaction.addToBackStack(null);
     	    	    fragmentTransaction.replace(R.id.container, fragment);
     	    	    fragmentTransaction.commit();
-    		        
     	        } else {
-    		        Toast.makeText(getActivity(), "Wrong Credentials",
+    		        Toast.makeText(getActivity(), "Falsche Benutzerdaten!",
     		        Toast.LENGTH_SHORT).show();
     	        }
         	}

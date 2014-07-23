@@ -2,6 +2,8 @@ package com.example.picspot;
 
 import java.io.Console;
 
+import com.example.picspot.Objects.User;
+
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -18,8 +20,10 @@ import android.os.Build;
 
 public class MainActivity extends ActionBarActivity {
 	
-
-    @Override
+	private boolean hasRegistered = false;
+	private User user = null;
+	
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -48,8 +52,7 @@ public class MainActivity extends ActionBarActivity {
         
         
     }
-
-
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         
@@ -85,5 +88,21 @@ public class MainActivity extends ActionBarActivity {
             return rootView;
         }
     }
+    
+    public boolean getHasRegistered(){
+    	return this.hasRegistered;
+    }
+    
+    public void setHasRegistered(boolean registered){
+    	this.hasRegistered = registered;
+    }
+    
+    public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
 
 }
