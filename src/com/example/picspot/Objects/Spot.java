@@ -1,9 +1,11 @@
 package com.example.picspot.Objects;
 
+import java.util.Vector;
+
+import android.graphics.Bitmap;
+
 public class Spot {
 	String name;
-	
-
 	//poster_image
 	//desc;
 	double lng;
@@ -12,6 +14,7 @@ public class Spot {
 	int radius;
 	//creator
 	//state
+	Vector<Bitmap> picArray = new Vector<Bitmap>();
 	
 	public Spot(double pLat, double pLng,String pName) {
 		this.radius = 10;

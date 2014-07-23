@@ -1,12 +1,22 @@
 package com.example.picspot;
 
 import java.io.Console;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import com.example.picspot.Objects.Pic;
 
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager ;
 import android.support.v4.app.FragmentTransaction;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.location.Location;
+import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,11 +24,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.Toast;
 import android.os.Build;
+import android.provider.MediaStore;
+import android.provider.Settings;
 
 public class MainActivity extends ActionBarActivity {
 	
-
+	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+	private Pic lastPic = new Pic();
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,5 +101,52 @@ public class MainActivity extends ActionBarActivity {
             return rootView;
         }
     }
+    @Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE ) {
+	        if (resultCode == RESULT_OK) {
+	            // Image captured and saved to fileUri specified in the Intent
+	            Toast.makeText(this, "Image taken", Toast.LENGTH_LONG).show();
+	            
+	            Pic pic = new Pic();
+       		    
+       		    LocationManager locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+       		    boolean enabled = locManager
+       		    		.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+       		    if (!enabled) {
+       		    	Intent intentLoc = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+       		    	startActivity(intentLoc);
+       		    } 
+     		
+       		    Location currentLoc = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+       		    if(currentLoc == null)
+       		    	currentLoc = locManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+       		    
+       		    
+       		    lastPic.setLat(currentLoc.getLatitude());
+       		    lastPic.setLng(currentLoc.getLongitude());
+       		    
+       		    
+       		    Log.i("test", pic.toString());
+	            }
+	        } else if (resultCode == RESULT_CANCELED) {
+	            // User cancelled the image capture
+	        } else {
+	            // Image capture failed, advise user
+	        }
+	    }
+    
+    	public Pic getLastPic()
+    	{
+    		return this.lastPic;
+    	}
+    	
+    	public void setLastPicPath(String pPath){
+    		this.lastPic.setLocalPath(pPath);
+    	}
+    	
+    	public void setLastPicName(String pName){
+    		this.lastPic.setName(pName);
+    	}
+	}
 
-}

@@ -1,16 +1,34 @@
 package com.example.picspot;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import android.content.Context;
+import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.example.picspot.Objects.Pic;
+
 public class SpotDetailFragment extends Fragment{
 
+	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+	private Uri fileUri;
+	public static final int MEDIA_TYPE_IMAGE = 1;
+
+	
 	public SpotDetailFragment() {
 		
 	}
@@ -25,26 +43,70 @@ public class SpotDetailFragment extends Fragment{
         
         btnAddPic.setOnClickListener(new Button.OnClickListener(){
         	public void onClick(View view){
-        		
-        		AddPicSelectionFragment fragment = new AddPicSelectionFragment();
-        		
-        		FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-	    	    /*FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-	    	    
-	    	    fragmentTransaction.addToBackStack(null);
-	    	    fragmentTransaction.replace(R.id.container, fragment);
-	    	    fragmentTransaction.commit();
-        		
-        		fragmentManager.beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
-                					 .show(fragment)
-                					 .commit();
-        		*/
-        		
         		btnCam.setVisibility(View.VISIBLE);
         		btnGallerie.setVisibility(View.VISIBLE);
         	}    	
         });
         
+        btnCam.setOnClickListener(new Button.OnClickListener(){
+        		
+       		@Override
+       	    public void onClick(View v) {
+       			// create Intent to take a picture and return control to the calling application
+       		    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+       		    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+       		    String name = "IMG_"+ timeStamp + ".jpg";
+       		    fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE, name); // create a file to save the image
+       		    
+       		   ((MainActivity) getActivity()).setLastPicPath(fileUri.toString());
+       		   ((MainActivity) getActivity()).setLastPicName(name);
+       		   
+       		   
+       		    intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
+       		    Log.i("test",fileUri.toString());
+       		    
+       		    // start the image capture Intent
+       		    getActivity().startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+       		}
+        });
         return resultView;
 	}   
+	
+	/** Create a file Uri for saving an image or video */
+	private static Uri getOutputMediaFileUri(int type, String name){
+	      return Uri.fromFile(getOutputMediaFile(type, name));
+	}
+
+	
+	/** Create a File for saving an image or video */
+	private static File getOutputMediaFile(int type, String name){
+	    // To be safe, you should check that the SDCard is mounted
+	    // using Environment.getExternalStorageState() before doing this.
+
+	    File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+	              Environment.DIRECTORY_PICTURES), "PicSpot");
+	    // This location works best if you want the created images to be shared
+	    // between applications and persist after your app has been uninstalled.
+
+	    // Create the storage directory if it does not exist
+	    if (! mediaStorageDir.exists()){
+	        if (! mediaStorageDir.mkdirs()){
+	            Log.d("PicSpot", "failed to create directory");
+	            return null;
+	        }
+	    }
+	    // Create a media file name
+	    
+	    File mediaFile;
+	   
+	    if (type == MEDIA_TYPE_IMAGE){
+	        mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+	        name);
+	        
+	    } else {
+	        return null;
+	    }
+
+	    return mediaFile;
+	}
 }

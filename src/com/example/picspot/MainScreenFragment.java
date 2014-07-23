@@ -1,11 +1,21 @@
 package com.example.picspot;
 
+import java.util.Map;
+import java.util.Vector;
+import java.util.concurrent.ExecutionException;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.provider.Telephony.Sms.Conversations;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -34,6 +44,7 @@ public class MainScreenFragment extends Fragment{
 	
 	private GoogleMap gMap;
 	private Marker lastOpened = null;
+	private Vector<Spot> spotVector = new Vector<Spot>();
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,7 +68,7 @@ public class MainScreenFragment extends Fragment{
                         return true;
                     } 
                 }
-
+				
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 	    	    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 	    	    SpotDetailFragment fragment = new SpotDetailFragment();
@@ -101,8 +112,53 @@ public class MainScreenFragment extends Fragment{
 	}
 	
 	private void loadSpots(){
-		Spot spot = new Spot( 48.0503177,8.2141939, "Firstspot");
+		Spot spot = null;
 		gMap = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.map)).getMap();
-        gMap.addMarker( new MarkerOptions().position(new LatLng( spot.getLat(),spot.getLng())).title(spot.getName()));
+		
+		AsyncTask loader = new AsyncTask<Map, Void, JSONArray>() {
+	        @Override
+	        protected JSONArray doInBackground(Map ...map) {
+	        	String url = "http://picspot.weislogel.net/spot.php?type=selectAll";
+	        	
+	        	JSONObject jsonResult = JSONfunctions.getJSONfromURL(url);
+	        	JSONArray data = new JSONArray();
+	        	try {
+	        		data = jsonResult.getJSONArray("spots");
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+	            return data;
+	        }
+	    }.execute();
+		
+	    JSONArray data;
+	    try {
+			data = (JSONArray) loader.get();
+			if(data != null) {
+    		    for(int i = 0 ; i < data.length() ; i++) {
+    		    	
+    		    	JSONObject obj = data.getJSONObject(i);
+    		    	double lat = Double.parseDouble(obj.getString("s_latitude"));
+    		    	double lng = Double.parseDouble(obj.getString("s_longitude"));
+    		    	String spotName = obj.getString("s_name");
+    		    	
+    		    	spot = new Spot(lat,lng,spotName);
+    		    	gMap.addMarker( new MarkerOptions().position(new LatLng( spot.getLat(),spot.getLng())).title(spot.getName()));
+    		    	spotVector.add(spot);
+    		    }
+    		}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void loadLocalPics(){
+		for(int i = 0;i < spotVector.size(); i++){
+			
+		}
 	}
 }

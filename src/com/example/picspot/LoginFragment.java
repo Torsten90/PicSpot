@@ -56,7 +56,9 @@ public class LoginFragment extends Fragment{
         		final String strUsername 	= username.getText().toString();
         		final String passwordHash = Helper.md5(strPassword);
         		
-        		String url = "http://picspot.weislogel.net?user="+strUsername+"&pass="+passwordHash;
+        		String url = "http://picspot.weislogel.net/user.php?type=getUser&name="+strUsername+"&pass="+passwordHash;
+        		Log.i("url",url);
+        		
         		
         		final List<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("user", strUsername));
@@ -65,7 +67,7 @@ public class LoginFragment extends Fragment{
                 AsyncTask loader = new AsyncTask<Map, Void, JSONArray>() {
         	        @Override
         	        protected JSONArray doInBackground(Map ...map) {
-        	        	String url = "http://picspot.weislogel.net/getUser.php?user="+strUsername+"&pass="+passwordHash;
+        	        	String url = "http://picspot.weislogel.net/user.php?type=getUser&name="+strUsername+"&pass="+passwordHash;
         	        	
         	        	JSONObject jsonResult = JSONfunctions.getJSONfromURL(url);
         	        	JSONArray data = new JSONArray();
