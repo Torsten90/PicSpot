@@ -14,9 +14,8 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_alignParentTop="true"
-      android:layout_centerHorizontal="true"
       android:layout_marginTop="18dp"
-      android:text="@string/hello_world"
+      android:text="@string/Login"
       android:textAppearance="?android:attr/textAppearanceLarge" />
 
    <TextView
@@ -61,16 +60,23 @@
       android:inputType="textPassword" />
 
    <Button
-      android:id="@+id/button1"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_below="@+id/editText2"
-      android:layout_centerHorizontal="true"
-      android:layout_marginTop="94dp"
-      android:onClick="login"
-      android:text="@string/Login" />
+       android:id="@+id/button1"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_alignRight="@+id/editText2"
+       android:layout_below="@+id/editText2"
+       android:layout_marginTop="51dp"
+       android:background="@color/blue"
+       android:onClick="login"
+       android:text="@string/Login" />
 
-   
-    
+   <Button
+       android:id="@+id/btnLoginRegister"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_alignBaseline="@+id/button1"
+       android:layout_alignBottom="@+id/button1"
+       android:layout_alignLeft="@+id/textView3"
+       android:text="@string/btnRegistr" />
     
 </RelativeLayout>
