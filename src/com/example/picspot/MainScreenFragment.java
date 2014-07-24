@@ -2,6 +2,7 @@ package com.example.picspot;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
@@ -19,6 +20,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -32,10 +34,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import com.example.picspot.R;
+
+import com.example.picspot.Objects.Pic;
 import com.example.picspot.Objects.Spot;
+import com.example.picspot.Objects.User;
+import com.example.picspot.misc.JSONfunctions;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -46,9 +56,17 @@ public class MainScreenFragment extends Fragment{
 		
 	}
 	
+	private boolean hasRegistered = false;
+	private User user = null;
+	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+	private Pic lastPic = new Pic();
+	
 	private GoogleMap gMap;
 	private Marker lastOpened = null;
 	private Vector<Spot> spotVector = new Vector<Spot>();
+	
+	private ArrayList<Spot> Spots = new ArrayList<Spot>();
+	
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,10 +74,26 @@ public class MainScreenFragment extends Fragment{
         View resultView = inflater.inflate(R.layout.main_screen, container, false);
         
         loadSpots();
-       
-        gMap.setOnMarkerClickListener(new OnMarkerClickListener() {
-            @Override
-			public boolean onMarkerClick(Marker marker) {
+		
+		LocationManager locManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+		boolean enabled = locManager
+		  .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+		if (!enabled) {
+		  Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+		  startActivity(intent);
+		} 
+		
+		Location currentLoc = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		if(currentLoc == null)
+			currentLoc = locManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+		
+		CameraUpdate center=CameraUpdateFactory.newLatLng(new LatLng(currentLoc.getLatitude(),currentLoc.getLongitude()));
+		CameraUpdate dte = CameraUpdateFactory.zoomTo(15);
+		
+		gMap.moveCamera(center);
+		gMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+		gMap.setOnMarkerClickListener(new OnMarkerClickListener() {
+            public boolean onMarkerClick(Marker marker) {
             	 // Check if there is an open info window
                 if (lastOpened != null) {
                     // Close the info window
@@ -73,12 +107,13 @@ public class MainScreenFragment extends Fragment{
                         return true;
                     } 
                 }
+				
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 	    	    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 	    	    SpotDetailFragment fragment = new SpotDetailFragment();
 	    	    
 	    	    fragmentTransaction.addToBackStack(null);
-	    	    fragmentTransaction.replace(R.id.container, fragment);
+	    	    fragmentTransaction.replace(R.id.drawer_layout, fragment);
 	    	    fragmentTransaction.commit();
                 
                 // Re-assign the last opened such that we can close it later
@@ -88,12 +123,11 @@ public class MainScreenFragment extends Fragment{
                 return true;
             }
         });
-        
-        final Button btnAddSpot = (Button) resultView.findViewById(R.id.btnAddSpot);
+		
+		final Button btnAddSpot = (Button) resultView.findViewById(R.id.btnAddSpot);
         
         btnAddSpot.setOnClickListener(new Button.OnClickListener(){
-        	@Override
-			public void onClick(View view){
+        	public void onClick(View view){
         		LocationManager locManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         		boolean enabled = locManager
         		  .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -114,7 +148,10 @@ public class MainScreenFragment extends Fragment{
 	
 	private void addSpot(double lat, double lng){
 		
-		Spot spot = new Spot(lat,lng, "MySpot",1);
+		SharedPreferences userDetails = getActivity().getSharedPreferences("userdetails", getActivity().MODE_PRIVATE); 
+		int userId = userDetails.getInt("id", 0);
+		
+		Spot spot = new Spot(lat,lng, "MySpot",userId);
 		String params = spot.genUploadURL();
 		
 		 AsyncTask loader = new AsyncTask<String, Void, Boolean>() {
@@ -180,12 +217,18 @@ public class MainScreenFragment extends Fragment{
     		    	double lat = Double.parseDouble(obj.getString("s_latitude"));
     		    	double lng = Double.parseDouble(obj.getString("s_longitude"));
     		    	String spotName = obj.getString("s_name");
-    		    	int creator = Integer.parseInt(obj.getString("s_creator"));
     		    	
     		    	spot = new Spot(lat,lng,spotName,1);
-    		    	gMap.addMarker( new MarkerOptions().position(new LatLng( spot.getLat(),spot.getLng())).title(spot.getName()));
+    		    	
+    		    	Spots.add(spot);
+    		    	
+    		    	MarkerOptions marker = new MarkerOptions().position(new LatLng( spot.getLat(),spot.getLng())).title(spot.getName());
+    		    	marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_blue));
+    		    	
+    		    	gMap.addMarker(marker);
     		    	spotVector.add(spot);
     		    }
+    		    ((MainActivity) getActivity()).setSpots(this.Spots);
     		}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -193,12 +236,6 @@ public class MainScreenFragment extends Fragment{
 			e.printStackTrace();
 		} catch (JSONException e) {
 			e.printStackTrace();
-		}
-	}
-	
-	private void loadLocalPics(){
-		for(int i = 0;i < spotVector.size(); i++){
-			
 		}
 	}
 }

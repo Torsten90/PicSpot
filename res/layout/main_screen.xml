@@ -1,49 +1,22 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/maps"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.picspot.MainActivity$PlaceholderFragment" >
-  <fragment
-    	android:id="@+id/map"
-    	android:name="com.google.android.gms.maps.MapFragment"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		/>
-  <Button
-      android:id="@+id/btnAddSpot"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_alignParentBottom="true"
-      android:layout_centerHorizontal="true"
-      android:text="+"/>
+    android:layout_height="match_parent" >
 
-  <Button
-      android:id="@+id/btnShowPrivateMenu"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_alignParentLeft="true"
-      android:layout_alignParentTop="true"
-      android:text="&lt;" />
-
-  <TextView
-      android:id="@+id/tvSpotName"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_alignBaseline="@+id/btnShowPrivateMenu"
-      android:layout_alignBottom="@+id/btnShowPrivateMenu"
-      android:layout_alignRight="@+id/btnAddSpot"
-      android:text="SpotName" />
-
-  <Button
-      android:id="@+id/btnShowPublicMenu"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_alignParentRight="true"
-      android:layout_alignParentTop="true"
-      android:text=">" />
- 
+	    
+		  <fragment
+		    	android:id="@+id/map"
+		    	android:name="com.google.android.gms.maps.MapFragment"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				/>
+		  <Button
+		      android:id="@+id/btnAddSpot"
+		      android:layout_width="wrap_content"
+		      android:layout_height="wrap_content"
+		      android:layout_alignParentBottom="true"
+		      android:layout_centerHorizontal="true"
+		      android:text="+"/>
+		
 </RelativeLayout>

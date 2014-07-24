@@ -1,29 +1,19 @@
 package com.example.picspot;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
-import com.example.picspot.Objects.Pic;
+import com.example.picspot.misc.ImageAdapter;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.GridView;
+import com.example.picspot.R;
 
 public class GalleryFragment extends Fragment{
 

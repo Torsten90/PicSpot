@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import com.example.picspot.R;
 
 public class SpotDetailFragment extends Fragment{
 
@@ -75,7 +76,7 @@ public class SpotDetailFragment extends Fragment{
  	    	    GalleryFragment fragment = new GalleryFragment();
  	    	    
  	    	    fragmentTransaction.addToBackStack(null);
- 	    	    fragmentTransaction.replace(R.id.container, fragment);
+ 	    	    fragmentTransaction.replace(R.id.drawer_layout, fragment);
  	    	    fragmentTransaction.commit();
         	}
         });
