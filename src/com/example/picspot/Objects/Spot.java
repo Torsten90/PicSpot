@@ -70,4 +70,12 @@ public class Spot {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public void setDescription(String desc) {
+		this.desc = desc;
+	}
+
+	public String getDescription() {
+		return this.desc;
+	}
 }

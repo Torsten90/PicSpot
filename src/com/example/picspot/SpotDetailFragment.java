@@ -17,14 +17,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+
 import com.example.picspot.R;
+import com.example.picspot.Objects.Spot;
 
 public class SpotDetailFragment extends Fragment{
 
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 	private Uri fileUri;
 	public static final int MEDIA_TYPE_IMAGE = 1;
-
+	
+	private Spot spot = null;
 	
 	public SpotDetailFragment() {
 		
@@ -38,6 +42,18 @@ public class SpotDetailFragment extends Fragment{
         final Button btnCam = (Button) resultView.findViewById(R.id.btnCam);
         final Button btnGallerie = (Button) resultView.findViewById(R.id.btnGallerie);
         final Button btnShowPics = (Button) resultView.findViewById(R.id.btnShowPics);
+        
+        TextView tvSpotName = (TextView) resultView.findViewById(R.id.tvSpotName);
+        TextView tvSpotDesc = (TextView) resultView.findViewById(R.id.tvSpotDetailDesc);
+        
+        if(spot != null){
+        	tvSpotName.setText(spot.getName());
+        	String desc = spot.getDescription();
+        	if(desc.equals("")){
+        		desc = "Keine Beschreibung hinterlegt";
+        	}
+        	tvSpotDesc.setText(desc);
+        }
         
         btnAddPic.setOnClickListener(new Button.OnClickListener(){
         	@Override
@@ -120,5 +136,9 @@ public class SpotDetailFragment extends Fragment{
 	    }
 
 	    return mediaFile;
+	}
+	public void setSelectedSpot(Spot spot) {
+		// TODO Auto-generated method stub
+		this.spot = spot;
 	}
 }
