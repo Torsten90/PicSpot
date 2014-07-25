@@ -253,10 +253,12 @@ public class MainScreenFragment extends Fragment{
     		    	
     		    	Spots.add(spot);
     		    	
-    		    	MarkerOptions marker = new MarkerOptions().position(new LatLng( spot.getLat(),spot.getLng())).title(spot.getName());
-    		    	marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_green));
+    		    	//MarkerOptions marker = new MarkerOptions().position(new LatLng( spot.getLat(),spot.getLng())).title(spot.getName());
+    		    	Marker marker = gMap.addMarker(new MarkerOptions().position(new LatLng( spot.getLat(),spot.getLng())).title(spot.getName()).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_green)));
+    		    	spotMarkerMap.put(marker, spot);
+    		    	//marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_green));
     		    	
-    		    	gMap.addMarker(marker);
+    		    	//gMap.addMarker(marker);
     		    	spotVector.add(spot);
     		    }
     		    ((MainActivity) getActivity()).setSpots(this.Spots);
