@@ -3,6 +3,7 @@ package com.example.picspot;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
@@ -36,8 +37,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.picspot.R;
-
 import com.example.picspot.Objects.Pic;
 import com.example.picspot.Objects.Spot;
 import com.example.picspot.Objects.User;
@@ -51,6 +50,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
 
 public class MainScreenFragment extends Fragment{
 	
@@ -68,7 +68,7 @@ public class MainScreenFragment extends Fragment{
 	private Vector<Spot> spotVector = new Vector<Spot>();
 	
 	private ArrayList<Spot> Spots = new ArrayList<Spot>();
-	
+	private HashMap<Marker, Spot> spotMarkerMap = new HashMap<Marker, Spot>();
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -110,14 +110,19 @@ public class MainScreenFragment extends Fragment{
                     } 
                 }
 				
+                Spot spot = spotMarkerMap.get(marker);
+                
+                String test = spotMarkerMap.toString();
+                
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 	    	    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 	    	    SpotDetailFragment fragment = new SpotDetailFragment();
 	    	    
+	    	    fragment.setSelectedSpot(spot);
+	    	    
 	    	    fragmentTransaction.addToBackStack(null);
 	    	    fragmentTransaction.replace(R.id.drawer_layout, fragment);
 	    	    fragmentTransaction.commit();
-                
                 // Re-assign the last opened such that we can close it later
                 lastOpened = marker;
 
@@ -154,7 +159,7 @@ public class MainScreenFragment extends Fragment{
 		int userId = userDetails.getInt("id", 0);
 		
 		Spot spot = new Spot(lat,lng, "MySpot",userId);
-		String params = spot.genUploadURL();
+		String params = spot.genSpotUploadURL();
 		
 		 AsyncTask loader = new AsyncTask<String, Void, Boolean>() {
 	        @Override
