@@ -3,7 +3,6 @@ package com.example.picspot;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
@@ -35,6 +34,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
+
+import com.example.picspot.R;
 
 import com.example.picspot.Objects.Pic;
 import com.example.picspot.Objects.Spot;
@@ -66,7 +68,7 @@ public class MainScreenFragment extends Fragment{
 	private Vector<Spot> spotVector = new Vector<Spot>();
 	
 	private ArrayList<Spot> Spots = new ArrayList<Spot>();
-	private HashMap<Marker, Spot> spotMarkerMap = new HashMap<Marker, Spot>();
+	
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -107,15 +109,10 @@ public class MainScreenFragment extends Fragment{
                         return true;
                     } 
                 }
-                Spot spot = spotMarkerMap.get(marker);
-                
-                String test = spotMarkerMap.toString();
-                
+				
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 	    	    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 	    	    SpotDetailFragment fragment = new SpotDetailFragment();
-	    	    
-	    	    fragment.setSelectedSpot(spot);
 	    	    
 	    	    fragmentTransaction.addToBackStack(null);
 	    	    fragmentTransaction.replace(R.id.drawer_layout, fragment);
@@ -157,7 +154,7 @@ public class MainScreenFragment extends Fragment{
 		int userId = userDetails.getInt("id", 0);
 		
 		Spot spot = new Spot(lat,lng, "MySpot",userId);
-		String params = spot.genSpotUploadURL();
+		String params = spot.genUploadURL();
 		
 		 AsyncTask loader = new AsyncTask<String, Void, Boolean>() {
 	        @Override
@@ -174,6 +171,7 @@ public class MainScreenFragment extends Fragment{
     	               response.getEntity().writeTo(out);
     	               out.close();
     	               String responseString = out.toString();
+    	               
     	               //..more logic
     	        	} else{
     	               //Closes the connection.
@@ -190,7 +188,27 @@ public class MainScreenFragment extends Fragment{
 	        	return true;	
 	        }
 	    }.execute(params);
+	    
+	    boolean requestSend = false;
+		try {
+			requestSend = (Boolean) loader.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+ 	   
+   	   if(requestSend){
+   		Toast.makeText(getActivity().getApplicationContext(), "Spot angelegt", Toast.LENGTH_SHORT).show();
+   	   }
+	    
 	}
+	
+	
+	
+	
 	
 	private void loadSpots(){
 		Spot spot = null;
@@ -225,19 +243,16 @@ public class MainScreenFragment extends Fragment{
     		    	double lat = Double.parseDouble(obj.getString("s_latitude"));
     		    	double lng = Double.parseDouble(obj.getString("s_longitude"));
     		    	String spotName = obj.getString("s_name");
-    		    	int spotId = Integer.parseInt(obj.getString("s_id"));
     		    	
-    		    	spot = new Spot(spotId,lat,lng,spotName,1);
+    		    	spot = new Spot(lat,lng,spotName,1);
     		    	
     		    	Spots.add(spot);
     		    	
-    		    	Marker marker = gMap.addMarker(new MarkerOptions().position(new LatLng( spot.getLat(),spot.getLng())).title(spot.getName()).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_blue)));;
-    		    	//marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_blue));
-
-    		    	spotMarkerMap.put(marker, spot);
-    		    	//gMap.addMarker(marker);
-    		    	spotVector.add(spot);
+    		    	MarkerOptions marker = new MarkerOptions().position(new LatLng( spot.getLat(),spot.getLng())).title(spot.getName());
+    		    	marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_green));
     		    	
+    		    	gMap.addMarker(marker);
+    		    	spotVector.add(spot);
     		    }
     		    ((MainActivity) getActivity()).setSpots(this.Spots);
     		}

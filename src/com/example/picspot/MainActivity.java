@@ -1,23 +1,8 @@
 package com.example.picspot;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -25,10 +10,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -37,7 +20,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,10 +29,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.example.picspot.R;
 
 import com.example.picspot.Objects.Pic;
 import com.example.picspot.Objects.Spot;
 import com.example.picspot.Objects.User;
+import com.example.picspot.misc.SpotAdapter;
 import com.example.picspot.slidingmenu.CustomAdapter;
 import com.example.picspot.slidingmenu.RowItem;
 import com.google.android.gms.maps.GoogleMap;
@@ -85,7 +69,7 @@ public class MainActivity extends ActionBarActivity {
 	private List<RowItem> rowItems;
 	private CustomAdapter adapter;
 	
-	private Spot selectedSpot = null;
+	private SpotAdapter spotAdapter = null;
 
 	@SuppressLint("NewApi")
 	@Override
@@ -144,7 +128,7 @@ public class MainActivity extends ActionBarActivity {
 
 		if (savedInstanceState == null) {
 			// on first time display view for first nav item
-			updateDisplay(0);
+			updateDisplay(1);
 		}
 		
 		SharedPreferences userDetails = getSharedPreferences("userdetails", MODE_PRIVATE); 
@@ -239,8 +223,8 @@ public class MainActivity extends ActionBarActivity {
 		}
 		// Handle action bar actions click
 		switch (item.getItemId()) {
-		case R.id.action_settings:
-			return true;
+		/*case R.id.action_settings:
+			return true;*/
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -253,7 +237,7 @@ public class MainActivity extends ActionBarActivity {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		// if nav drawer is opened, hide the action items
 		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerLinear);
-		menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
+		//menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -284,6 +268,8 @@ public class MainActivity extends ActionBarActivity {
 				// Image captured and saved to fileUri specified in the Intent
 				Toast.makeText(this, "Image taken", Toast.LENGTH_LONG).show();
 
+				Pic pic = new Pic();
+
 				LocationManager locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 				boolean enabled = locManager
 						.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -301,66 +287,10 @@ public class MainActivity extends ActionBarActivity {
 
 				lastPic.setLat(currentLoc.getLatitude());
 				lastPic.setLng(currentLoc.getLongitude());
-				SharedPreferences userDetails = getSharedPreferences("userdetails", MODE_PRIVATE); 
-				lastPic.setCreator(userDetails.getInt("id", 0));
+			    lastPic.setCreator(user.getId());
 			    lastPic.ladeBitmap();
 				
-			    String params = lastPic.genPicUploadURL();
-			    ByteArrayOutputStream bao = new ByteArrayOutputStream();
-
-			    Bitmap spotBmp = lastPic.getPic();
-			    lastPic.getPic().compress(Bitmap.CompressFormat.JPEG, 5, bao);
-			    byte [] ba = bao.toByteArray();
-			    String ba1=Base64.encodeToString(ba, 0);
-			    final ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-
-			    nameValuePairs.add(new BasicNameValuePair("fields[i_name]",lastPic.getName()));
-			    nameValuePairs.add(new BasicNameValuePair("fields[i_description]",lastPic.getDescription()));
-			    nameValuePairs.add(new BasicNameValuePair("fields[i_owner]",String.valueOf(lastPic.getCreator())));
-			    nameValuePairs.add(new BasicNameValuePair("fields[i_latitude]",String.valueOf(lastPic.getLat())));
-			    nameValuePairs.add(new BasicNameValuePair("fields[i_longitude]",String.valueOf(lastPic.getLng())));
-			    nameValuePairs.add(new BasicNameValuePair("spot",String.valueOf(selectedSpot.getId())));
-			    nameValuePairs.add(new BasicNameValuePair("type","insert"));
-			    nameValuePairs.add(new BasicNameValuePair("image",ba1));
-			    Log.i("encode", lastPic.encodePic());
-			         
-				AsyncTask loader = new AsyncTask<String, Void, Boolean>() {
-			        @Override
-			        protected Boolean doInBackground(String ...fields) {
-			        	
-			        	String url = "http://picspot.weislogel.net/image.php"+fields[0];
-			        	Log.i("url", url);
-			        	try {
-			        		HttpClient httpclient = new DefaultHttpClient();
-			        		HttpPost httppost = new HttpPost("http://picspot.weislogel.net/image.php");
-			        		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));        
-			        		HttpResponse response = httpclient.execute(httppost);
-			        		HttpEntity entity = response.getEntity();
-		    	        	
-		    	        	//HttpResponse response = httpclient.execute(new HttpGet(url));*/
-		    	        	StatusLine statusLine = response.getStatusLine();
-		    	        	
-		    	        	if(statusLine.getStatusCode() == HttpStatus.SC_OK){
-		    	               ByteArrayOutputStream out = new ByteArrayOutputStream();
-		    	               response.getEntity().writeTo(out);
-		    	               out.close();
-		    	               String responseString = out.toString();
-		    	               //..more logic
-		    	        	} else{
-		    	               //Closes the connection.
-		    	               response.getEntity().getContent().close();
-		    	               throw new IOException(statusLine.getReasonPhrase());
-		    	        	}
-			        	} catch (ClientProtocolException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-			        	return true;	
-			        }
-			    }.execute(params);
+				Log.i("test", pic.toString());
 			}
 		} else if (resultCode == RESULT_CANCELED) {
 			// User cancelled the image capture
@@ -408,16 +338,14 @@ public class MainActivity extends ActionBarActivity {
 	public void setSpots(ArrayList<Spot> spots) {
 		Spots = spots;
 	}
-
-	public Spot getSelectedSpot() {
-		return selectedSpot;
-	}
-
-	public void setSelectedSpot(Spot selectedSpot) {
-		this.selectedSpot = selectedSpot;
+	
+	public void setSpotAdapter(SpotAdapter adapter){
+		this.spotAdapter = adapter;
 	}
 	
-	
+	public SpotAdapter getSpotAdapter(){
+		return this.spotAdapter;
+	}
 	
 
 }

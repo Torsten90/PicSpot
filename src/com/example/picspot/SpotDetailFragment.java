@@ -1,11 +1,25 @@
 package com.example.picspot;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -17,9 +31,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.picspot.Objects.Spot;
+import com.example.picspot.Objects.User;
+import com.example.picspot.misc.Helper;
+import com.example.picspot.misc.SpotAdapter;
 
 
 
@@ -45,11 +64,13 @@ public class SpotDetailFragment extends Fragment{
         final Button btnGallerie = (Button) resultView.findViewById(R.id.btnGallerie);
         final Button btnShowPics = (Button) resultView.findViewById(R.id.btnShowPics);
         
-        TextView tvSpotName = (TextView) resultView.findViewById(R.id.tvSpotName);
-        TextView tvSpotDesc = (TextView) resultView.findViewById(R.id.tvSpotDetailDesc);
+        final Button btnSaveSpotDetails = (Button) resultView.findViewById(R.id.btnSaveSpotDetails);
+        
+        final EditText etSpotName = (EditText) resultView.findViewById(R.id.tvSpotName);
+        final EditText tvSpotDesc = (EditText) resultView.findViewById(R.id.etTextField);
         
         if(spot != null){
-        	tvSpotName.setText(spot.getName());
+        	etSpotName.setText(spot.getName());
         	String desc = spot.getDescription();
         	if(desc.equals("")){
         		desc = "Keine Beschreibung hinterlegt";
@@ -63,6 +84,80 @@ public class SpotDetailFragment extends Fragment{
         		btnCam.setVisibility(View.VISIBLE);
         		btnGallerie.setVisibility(View.VISIBLE);
         	}    	
+        });
+        
+        btnSaveSpotDetails.setOnClickListener(new Button.OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+			
+			   String params = String.format("?type=update&id=%s&fields[s_name]=%s&fields[s_desc]=%s", 
+					   spot.getId(), Helper.urlWhiteSpace(etSpotName.getText().toString()), Helper.urlWhiteSpace(tvSpotDesc.getText().toString()));	 
+				
+				AsyncTask loader = new AsyncTask<String, Void, Boolean>() {
+         	        @Override
+         	        protected Boolean doInBackground(String ...fields) {
+         	        	
+         	        	String url = "http://picspot.weislogel.net/spot.php"+fields[0];
+         	        	try {
+	         	        	HttpClient httpclient = new DefaultHttpClient();
+	         	        	HttpResponse response = httpclient.execute(new HttpGet(url));
+	         	        	StatusLine statusLine = response.getStatusLine();
+	         	        	if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+	         	               ByteArrayOutputStream out = new ByteArrayOutputStream();
+	         	               response.getEntity().writeTo(out);
+	         	               out.close();
+	         	               String responseString = out.toString();
+	         	               //..more logic
+	         	        	} else{
+	         	               //Closes the connection.
+	         	               response.getEntity().getContent().close();
+	         	               throw new IOException(statusLine.getReasonPhrase());
+	         	        	}
+         	        	} catch (ClientProtocolException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+         	        	
+         	        	return true;	
+         	        }
+         	    }.execute(params);
+        		
+	         	   boolean requestSend = false;
+					try {
+						requestSend = (Boolean) loader.get();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ExecutionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	         	   
+		       	   if(requestSend){
+		       		   Toast.makeText(getActivity().getApplicationContext(), "Speichern erfolgreich", Toast.LENGTH_SHORT).show();
+		       		   
+		       		   SpotAdapter spotAdapter = ((MainActivity) getActivity()).getSpotAdapter();
+		       		   if(((MainActivity) getActivity()).getSpotAdapter() != null){
+		       			   	SharedPreferences userDetails = getActivity().getSharedPreferences("userdetails", getActivity().MODE_PRIVATE); 
+		       			   	int userId = userDetails.getInt("id", 0);
+		         	   
+		         	   		User user = new User(userId);
+		         	   		ArrayList<Spot> spots = user.loadSpots(); 
+		         	   		
+		         	   		spotAdapter.clear();
+		         	   		spotAdapter.addAll(spots);
+		         	   		spotAdapter.notifyDataSetChanged();
+		       		   }
+		       		   
+		       	   }
+				
+				
+			}
+        	
         });
         
         btnCam.setOnClickListener(new Button.OnClickListener(){
@@ -91,6 +186,10 @@ public class SpotDetailFragment extends Fragment{
         btnShowPics.setOnClickListener(new Button.OnClickListener(){
         	@Override
        	    public void onClick(View v) {
+        		
+        		Toast.makeText(getActivity(), "loading", 
+         		Toast.LENGTH_SHORT).show();
+        		
         		FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
  	    	    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
  	    	    GalleryFragment fragment = new GalleryFragment();
