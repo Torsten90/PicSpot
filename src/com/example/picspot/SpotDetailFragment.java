@@ -91,6 +91,8 @@ public class SpotDetailFragment extends Fragment{
  	    	    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
  	    	    GalleryFragment fragment = new GalleryFragment();
  	    	    
+ 	    	    fragment.setSpot(spot);
+ 	    	    
  	    	    fragmentTransaction.addToBackStack(null);
  	    	    fragmentTransaction.replace(R.id.drawer_layout, fragment);
  	    	    fragmentTransaction.commit();

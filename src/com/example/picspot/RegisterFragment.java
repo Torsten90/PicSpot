@@ -14,6 +14,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.example.picspot.misc.Helper;
+import com.example.picspot.misc.Validator;
 
 
 import android.os.AsyncTask;
@@ -82,10 +83,13 @@ public class RegisterFragment extends Fragment{
         		    invalid = true;
         		    errorMsg += "Geben Sie einen Nachnamen ein \n";
         		 }
-        		         
+        		 
+        		 Validator usernameValidtor = new Validator("^[a-z0-9_-]{3,15}$");
         		 if(etUsernameStr.equals("")){
         		     invalid = true;
         		     errorMsg += "Geben Sie einen Benutzernamen ein \n";
+        		 } else if (usernameValidtor.isValid(etUsernameStr)){
+        			 errorMsg += "Sonderzeichen und Leerzeichen beim Benutzernam sind nicht erlaubt \n";
         		 }
         		    
         		 if(etPassStr.equals("")){
@@ -109,7 +113,12 @@ public class RegisterFragment extends Fragment{
         		 } else {
         		
         		 String passwortHash = Helper.md5(etPassStr);	 
-        			 
+        			
+        		 etFirstnameStr = Helper.urlWhiteSpace(etFirstnameStr);
+        		 etLastnameStr = Helper.urlWhiteSpace(etLastnameStr);
+        		 etEmailStr = Helper.urlWhiteSpace(etEmailStr);
+        		 etUsernameStr = Helper.urlWhiteSpace(etUsernameStr);
+        		 
         		 String params = String.format("?type=insert&fields[u_firstname]=%s&fields[u_lastname]=%s&fields[u_email]=%s&fields[u_username]=%s&fields[u_pass]=%s", 
         				 etFirstnameStr, etLastnameStr, etEmailStr, etUsernameStr, passwortHash);	 
     			 

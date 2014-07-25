@@ -89,7 +89,7 @@ public class User {
 		AsyncTask loader = new AsyncTask<Map, Void, JSONArray>() {
 	        @Override
 	        protected JSONArray doInBackground(Map ...map) {
-	        	String url = "http://picspot.weislogel.net/spot.php?type=selectAll";
+	        	String url = "http://picspot.weislogel.net/spot.php?type=selectAll&id="+id;
 	        	
 	        	JSONObject jsonResult = JSONfunctions.getJSONfromURL(url);
 	        	JSONArray data = new JSONArray();
@@ -111,9 +111,10 @@ public class User {
     		    	JSONObject obj = data.getJSONObject(i);
     		    	double lat = Double.parseDouble(obj.getString("s_latitude"));
     		    	double lng = Double.parseDouble(obj.getString("s_longitude"));
+    		    	int id = obj.getInt("s_id");
     		    	String spotName = obj.getString("s_name");
     		    	
-    		    	spot = new Spot(lat,lng,spotName,1);
+    		    	spot = new Spot(id,lat,lng,spotName,1);
     		    	spots.add(spot);
     		    }
     		}
