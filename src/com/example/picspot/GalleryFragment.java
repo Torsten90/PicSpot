@@ -31,19 +31,6 @@ public class GalleryFragment extends Fragment{
 		return detailView;
 	}
  
-	/*private ArrayList getData() {
-		final ArrayList imageItems = new ArrayList();
-		// retrieve String drawable array
-		TypedArray imgs = getResources().obtainTypedArray(R.array.image_ids);
-		for (int i = 0; i < imgs.length(); i++) {
-			Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(),
-					imgs.getResourceId(i, -1));
-			imageItems.add(new Pic());
-		}
- 
-		return imageItems;
- 
-	}*/
 	 
 	 private ArrayList getPics(){
 		 final ArrayList imageItems = new ArrayList();

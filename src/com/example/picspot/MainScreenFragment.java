@@ -152,7 +152,7 @@ public class MainScreenFragment extends Fragment{
 		int userId = userDetails.getInt("id", 0);
 		
 		Spot spot = new Spot(lat,lng, "MySpot",userId);
-		String params = spot.genUploadURL();
+		String params = spot.genSpotUploadURL();
 		
 		 AsyncTask loader = new AsyncTask<String, Void, Boolean>() {
 	        @Override

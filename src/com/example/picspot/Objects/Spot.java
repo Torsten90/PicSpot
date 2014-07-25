@@ -28,7 +28,7 @@ public class Spot {
 		this.creator = pCreator;
 	}
 	
-	public String genUploadURL(){
+	public String genSpotUploadURL(){
 		
 		return "?type=insert&fields[s_name]=" + this.name +
 				"&fields[s_desc]=" + this.desc +

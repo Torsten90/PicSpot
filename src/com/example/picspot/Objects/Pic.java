@@ -1,19 +1,21 @@
 package com.example.picspot.Objects;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Base64;
 
 public class Pic {
 
 	private Bitmap pic;
-	private String localPath;
-	private String name;
-	private String description;
-	private int creator;
-	private double lat;
-	private double lng;
+	private String localPath = "";
+	private String name = "";
+	private String description ="";
+	private int creator=0;
+	private double lat=0.0;
+	private double lng=0.0;
 
 	public Pic() {
 
@@ -34,8 +36,34 @@ public class Pic {
 		}
 	}
 	
-	private void uploadPic(){
+	
+	public String encodePic(){
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();  
+		this.pic.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+		byte[] byteArray = byteArrayOutputStream .toByteArray();
+		String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+		return encoded;
+			
+	}
+	public String genPicUploadURL(){
 		
+		/*return "?type=insert&fields[s_name]=" + this.name +
+				"&fields[s_desc]=" + this.desc +
+				"&fields[s_latitude]=" + this.lat +
+				"&fields[s_longitude]=" + this.lng +
+				"&fields[s_date]=2014-07-23" +
+				"&fields[s_radius]=" + this.radius +
+				"&fields[s_creator]=" + this.creator +
+				"&fields[s_state]=" + this.state;*/
+	
+		
+		return "?type=insert&spot=1&fields[i_name]=" + this.name +
+				"&fields[i_description]=" + this.description +
+				"&fields[i_owner]=" + this.creator +
+				"&fields[i_latitude]=" + this.lat +
+				"&fields[i_longitude]=" + this.lng + 
+				"&image=/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEB";
+				//encoded;  
 	}
 
 	@Override
