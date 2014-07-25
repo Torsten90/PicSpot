@@ -53,7 +53,6 @@ public class MainActivity extends ActionBarActivity {
 	
 	private ArrayList<Spot> Spots = new ArrayList<Spot>();
 	
-	
 	String[] menutitles;
 	TypedArray menuIcons;
 

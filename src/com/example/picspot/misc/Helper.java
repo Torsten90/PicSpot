@@ -28,4 +28,9 @@ public class Helper {
 	    }
 	    return "";
 	}
+	
+	public static String urlWhiteSpace(String str){
+		return str.replaceAll("\\s+","%20");
+	}
+	
 }

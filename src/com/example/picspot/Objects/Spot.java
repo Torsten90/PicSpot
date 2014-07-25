@@ -17,10 +17,20 @@ public class Spot {
 	private int radius = 0;
 	private int creator = 0;
 	private int state = 1;
+	private int id = 0;
 	
 	Vector<Bitmap> picArray = new Vector<Bitmap>();
 	
 	public Spot(double pLat, double pLng,String pName, int pCreator) {
+		this.radius = 10;
+		this.lat = pLat;
+		this.lng = pLng;
+		this.name = pName;
+		this.creator = pCreator;
+	}
+	
+	public Spot(int id, double pLat, double pLng,String pName, int pCreator) {
+		this.id = id;
 		this.radius = 10;
 		this.lat = pLat;
 		this.lng = pLng;
@@ -78,4 +88,14 @@ public class Spot {
 	public String getDescription() {
 		return this.desc;
 	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	
 }

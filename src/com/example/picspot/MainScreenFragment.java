@@ -191,10 +191,13 @@ public class MainScreenFragment extends Fragment{
 		Spot spot = null;
 		gMap = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.map)).getMap();
 		
+		SharedPreferences userDetails = getActivity().getSharedPreferences("userdetails", getActivity().MODE_PRIVATE); 
+		final int userId = userDetails.getInt("id", 0);
+		
 		AsyncTask loader = new AsyncTask<Map, Void, JSONArray>() {
 	        @Override
 	        protected JSONArray doInBackground(Map ...map) {
-	        	String url = "http://picspot.weislogel.net/spot.php?type=selectAll";
+	        	String url = "http://picspot.weislogel.net/spot.php?type=selectAll&id="+userId;
 	        	
 	        	JSONObject jsonResult = JSONfunctions.getJSONfromURL(url);
 	        	JSONArray data = new JSONArray();

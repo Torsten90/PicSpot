@@ -33,10 +33,6 @@ public class Pic {
 			this.pic = BitmapFactory.decodeFile("/storage/emulated/0/Pictures/PicSpot/IMG_20140723_174628.jpg");
 		}
 	}
-	
-	private void uploadPic(){
-		
-	}
 
 	@Override
 	public String toString() {
