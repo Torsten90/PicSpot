@@ -34,6 +34,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
+
 import com.example.picspot.R;
 
 import com.example.picspot.Objects.Pic;
@@ -169,6 +171,7 @@ public class MainScreenFragment extends Fragment{
     	               response.getEntity().writeTo(out);
     	               out.close();
     	               String responseString = out.toString();
+    	               
     	               //..more logic
     	        	} else{
     	               //Closes the connection.
@@ -185,7 +188,27 @@ public class MainScreenFragment extends Fragment{
 	        	return true;	
 	        }
 	    }.execute(params);
+	    
+	    boolean requestSend = false;
+		try {
+			requestSend = (Boolean) loader.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+ 	   
+   	   if(requestSend){
+   		Toast.makeText(getActivity().getApplicationContext(), "Spot angelegt", Toast.LENGTH_SHORT).show();
+   	   }
+	    
 	}
+	
+	
+	
+	
 	
 	private void loadSpots(){
 		Spot spot = null;
@@ -226,7 +249,7 @@ public class MainScreenFragment extends Fragment{
     		    	Spots.add(spot);
     		    	
     		    	MarkerOptions marker = new MarkerOptions().position(new LatLng( spot.getLat(),spot.getLng())).title(spot.getName());
-    		    	marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_blue));
+    		    	marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_green));
     		    	
     		    	gMap.addMarker(marker);
     		    	spotVector.add(spot);

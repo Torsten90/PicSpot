@@ -34,6 +34,7 @@ import com.example.picspot.R;
 import com.example.picspot.Objects.Pic;
 import com.example.picspot.Objects.Spot;
 import com.example.picspot.Objects.User;
+import com.example.picspot.misc.SpotAdapter;
 import com.example.picspot.slidingmenu.CustomAdapter;
 import com.example.picspot.slidingmenu.RowItem;
 import com.google.android.gms.maps.GoogleMap;
@@ -67,6 +68,8 @@ public class MainActivity extends ActionBarActivity {
 
 	private List<RowItem> rowItems;
 	private CustomAdapter adapter;
+	
+	private SpotAdapter spotAdapter = null;
 
 	@SuppressLint("NewApi")
 	@Override
@@ -220,8 +223,8 @@ public class MainActivity extends ActionBarActivity {
 		}
 		// Handle action bar actions click
 		switch (item.getItemId()) {
-		case R.id.action_settings:
-			return true;
+		/*case R.id.action_settings:
+			return true;*/
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -234,7 +237,7 @@ public class MainActivity extends ActionBarActivity {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		// if nav drawer is opened, hide the action items
 		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerLinear);
-		menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
+		//menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -334,6 +337,14 @@ public class MainActivity extends ActionBarActivity {
 
 	public void setSpots(ArrayList<Spot> spots) {
 		Spots = spots;
+	}
+	
+	public void setSpotAdapter(SpotAdapter adapter){
+		this.spotAdapter = adapter;
+	}
+	
+	public SpotAdapter getSpotAdapter(){
+		return this.spotAdapter;
 	}
 	
 

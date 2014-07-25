@@ -20,15 +20,15 @@
         <item>@drawable/logout</item>
     </array>
     
-   <color name="blue">#33BEFF</color>
+   <color name="blue">#8cc43f</color>
    <color name="grey">#F6F3F6</color>
    <color name="black">#333333</color>
-   <color name="white">#ffffff</color>
+   <color name="white">#e7e7e8</color>
    <color name="darkgrey">#dddddd</color>
    
    <string name="username">Benutzername:</string>
    <string name="password">Passwort:</string>
-   <string name="Login">Login</string>
+   <string name="Login">Anmelden</string>
    
    <string name="firstname">Vorname:</string>
    <string name="lastname">Nachname:</string>
