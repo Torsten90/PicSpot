@@ -84,6 +84,8 @@ public class MainActivity extends ActionBarActivity {
 
 	private List<RowItem> rowItems;
 	private CustomAdapter adapter;
+	
+	private Spot selectedSpot = null;
 
 	@SuppressLint("NewApi")
 	@Override
@@ -306,21 +308,21 @@ public class MainActivity extends ActionBarActivity {
 			    String params = lastPic.genPicUploadURL();
 			    ByteArrayOutputStream bao = new ByteArrayOutputStream();
 
+			    Bitmap spotBmp = lastPic.getPic();
+			    lastPic.getPic().compress(Bitmap.CompressFormat.JPEG, 5, bao);
+			    byte [] ba = bao.toByteArray();
+			    String ba1=Base64.encodeToString(ba, 0);
+			    final ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
-			    lastPic.getPic().compress(Bitmap.CompressFormat.JPEG, 90, bao);
-			         byte [] ba = bao.toByteArray();
-			         String ba1=Base64.encodeToString(ba, 0);
-			         final ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-
-			         nameValuePairs.add(new BasicNameValuePair("fields[i_name]",lastPic.getName()));
-			         nameValuePairs.add(new BasicNameValuePair("fields[i_description]",lastPic.getDescription()));
-			         nameValuePairs.add(new BasicNameValuePair("fields[i_owner]",String.valueOf(lastPic.getCreator())));
-			         nameValuePairs.add(new BasicNameValuePair("fields[i_latitude]",String.valueOf(lastPic.getLat())));
-			         nameValuePairs.add(new BasicNameValuePair("fields[i_longitude]",String.valueOf(lastPic.getLng())));
-			         nameValuePairs.add(new BasicNameValuePair("spot","1"));
-			         nameValuePairs.add(new BasicNameValuePair("type","insert"));
-			         nameValuePairs.add(new BasicNameValuePair("image",lastPic.encodePic()));
-			         Log.i("encode", lastPic.encodePic());
+			    nameValuePairs.add(new BasicNameValuePair("fields[i_name]",lastPic.getName()));
+			    nameValuePairs.add(new BasicNameValuePair("fields[i_description]",lastPic.getDescription()));
+			    nameValuePairs.add(new BasicNameValuePair("fields[i_owner]",String.valueOf(lastPic.getCreator())));
+			    nameValuePairs.add(new BasicNameValuePair("fields[i_latitude]",String.valueOf(lastPic.getLat())));
+			    nameValuePairs.add(new BasicNameValuePair("fields[i_longitude]",String.valueOf(lastPic.getLng())));
+			    nameValuePairs.add(new BasicNameValuePair("spot",String.valueOf(selectedSpot.getId())));
+			    nameValuePairs.add(new BasicNameValuePair("type","insert"));
+			    nameValuePairs.add(new BasicNameValuePair("image",ba1));
+			    Log.i("encode", lastPic.encodePic());
 			         
 				AsyncTask loader = new AsyncTask<String, Void, Boolean>() {
 			        @Override
@@ -406,6 +408,16 @@ public class MainActivity extends ActionBarActivity {
 	public void setSpots(ArrayList<Spot> spots) {
 		Spots = spots;
 	}
+
+	public Spot getSelectedSpot() {
+		return selectedSpot;
+	}
+
+	public void setSelectedSpot(Spot selectedSpot) {
+		this.selectedSpot = selectedSpot;
+	}
+	
+	
 	
 
 }

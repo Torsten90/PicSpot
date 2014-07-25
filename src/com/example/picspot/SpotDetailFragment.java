@@ -19,8 +19,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.picspot.R;
 import com.example.picspot.Objects.Spot;
+
+
+
 
 public class SpotDetailFragment extends Fragment{
 
@@ -73,9 +75,11 @@ public class SpotDetailFragment extends Fragment{
        		    String name = "IMG_"+ timeStamp + ".jpg";
        		    fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE, name); // create a file to save the image
        		    
-       		   ((MainActivity) getActivity()).setLastPicPath(fileUri.toString());
+       		    String pfad = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() +  "/PicSpot/";
+       		   ((MainActivity) getActivity()).setLastPicPath(pfad+name);
        		   ((MainActivity) getActivity()).setLastPicName(name);
-       		   
+       		   ((MainActivity) getActivity()).setSelectedSpot(spot);
+       		
        		    intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
        		    Log.i("test",fileUri.toString());
        		    

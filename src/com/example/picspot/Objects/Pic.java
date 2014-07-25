@@ -28,11 +28,9 @@ public class Pic {
 	}
 	
 	public void ladeBitmap(){
-		//File imgFile = new  File(this.localPath);
-		File imgFile = new  File("/storage/emulated/0/Pictures/PicSpot/IMG_20140723_174628.jpg");
+		File imgFile = new  File(this.localPath);
 		if(imgFile.exists()){
-		    //this.pic = BitmapFactory.decodeFile(imgFile.getAbsolutePath(/storage/emulated/0/Pictures/PicSpot/IMG_20140723_174628.jpg));
-			this.pic = BitmapFactory.decodeFile("/storage/emulated/0/Pictures/PicSpot/IMG_20140723_174628.jpg");
+		    this.pic = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
 		}
 	}
 	
@@ -46,16 +44,6 @@ public class Pic {
 			
 	}
 	public String genPicUploadURL(){
-		
-		/*return "?type=insert&fields[s_name]=" + this.name +
-				"&fields[s_desc]=" + this.desc +
-				"&fields[s_latitude]=" + this.lat +
-				"&fields[s_longitude]=" + this.lng +
-				"&fields[s_date]=2014-07-23" +
-				"&fields[s_radius]=" + this.radius +
-				"&fields[s_creator]=" + this.creator +
-				"&fields[s_state]=" + this.state;*/
-	
 		
 		return "?type=insert&spot=1&fields[i_name]=" + this.name +
 				"&fields[i_description]=" + this.description +

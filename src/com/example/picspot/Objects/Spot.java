@@ -8,6 +8,7 @@ import java.util.Vector;
 import android.graphics.Bitmap;
 
 public class Spot {
+	private int id;
 	private String name ="";
 	private Bitmap poster_image;
 	private String desc = "";
@@ -21,6 +22,15 @@ public class Spot {
 	Vector<Bitmap> picArray = new Vector<Bitmap>();
 	
 	public Spot(double pLat, double pLng,String pName, int pCreator) {
+		this.radius = 10;
+		this.lat = pLat;
+		this.lng = pLng;
+		this.name = pName;
+		this.creator = pCreator;
+	}
+	
+	public Spot(int pId, double pLat, double pLng,String pName, int pCreator) {
+		this.id = pId;
 		this.radius = 10;
 		this.lat = pLat;
 		this.lng = pLng;
@@ -77,5 +87,13 @@ public class Spot {
 
 	public String getDescription() {
 		return this.desc;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 }
